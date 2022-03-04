@@ -1,0 +1,122 @@
+Cook Book API (node,express,postgresql,jwt)
+    full authentication
+        register new users
+        log in existing users
+    full authorization
+        protected api routes
+        jwt    
+
+Users can:
+    -Login
+    -Get list of existing recipes
+    -Add new recipe
+        -Each recipe must contain a title, source, 
+            ingredients, instructions, category, and picture url(stretch).
+    -Edit/Delete existing recipes
+    -see other users recipes with an invitation link(stretch)
+
+API Routes:
+
+    Users:
+        [GET]:      Get all users           /api/users              protected           testing
+        [GET]:      Get user by ID          /api/:id/users          protected           testing
+        [POST]:     Register Users          /api/register               -                  - 
+        [POST]:     Login Users             /api/login                  -                  -
+
+    Recipes:
+        [GET]:      All recipes             /api/recipes            protected
+        [POST]:     Create new recipe       /api/recipes            protected
+        [PUT]:      Edit recipe             /api/recipes            protected
+        [DELETE]:   Delete recipe           /api/recipes            protected
+        [GET]:      Get recipe by ID        /api/:id/recipes        protected
+
+Database:
+    USERS
+    id  username    first_name      last_name       password
+    1   john123        john            doe             123            
+    2   jane123        jane            doe             123            
+
+    RECIPES
+    id  title               source              pic_url                     category    instructions        user_id(fk)     description 
+    1   grilled cheese      family recipe       http://test.io/pic/...      snack       setofinstructions   1               description 
+    2   quesadilla          online              http://test.io/pic/...      lunch       setofinstructions   1               description
+    3   ramen               online              http://test.io/pic/...      lunch       setofinstructions   2               description
+
+    INGREDIENTS
+    id  ingredient 
+    1   bread
+    2   cheese
+    3   butter
+    4   tortilla
+    5   ramen
+    6   cheese
+
+    RECIPES_INGREDIENTS
+    recipe_id(fk)       ingredient_id(fk)
+    1                   1
+    1                   2
+    1                   3
+    2                   4
+    2                   6
+    3                   5
+
+USERS to RECIPES                1:n
+RECIPES to INGREDIENTS          n:m
+
+
+
+
+
+forgot password workflow
+--------------------------
+user attemps login
+user forgot password(clicks on forgot password link) 
+user is redirected to forgot password page
+user enters email used to reset password
+on submission, server sends email with verification link if email is found
+if user clicks on that link in email, they are redirected to change password page
+on submission, redirected to login page to login with new credentials
+
+
+
+confirmation email on register workflow
+-----------------------------------------
+right after new user is registered, send verification email to user
+wait till user opens link inside email
+dont show full app until then
+
+
+
+share recipes between two users workflow
+-----------------------------------------
+allow each user to have randomly generated code to share 
+if code is shared between users, user can input their friends code into a form to view all their recipes
+
+
+
+TO FIX: (2/27/2022)
+-search bar 
+-redirect to recipes after creation of recipe
+-redirect to recipes after edit of recipe
+-update list after recipe deletion
+-edit recipe form must be updated like create form
+    -prep_time input type="number"
+    -instructions to have single input like description or category
+    -validation
+    -when picture is uploaded on edit form, picture must appear like create form
+-both edit form and create form must have ingredients button fixed
+-fix multi click on picture upload button (create/edit forms)
+-if login fails, display message
+-if two users are logged in one after another before a refresh, 
+    last recipe displayed from previously logged in account will
+    display on new account. clear info on logout
+-when new user, left and right sections are just empty, display message
+-if user tries to register with credentials already in database, display message
+-on successful register, redirect to login (really redirect to confirm email page
+                                            and dont let them log in till confirmation
+                                            link was hit)
+-on initial email submit when user has forgoten password, on success, redirect to 
+    page telling user to check email for link
+-on last reset password form, redirect to login on success
+-validation on backend
+-style website/make responsive  
