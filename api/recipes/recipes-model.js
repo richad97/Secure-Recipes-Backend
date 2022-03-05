@@ -53,28 +53,47 @@ const createRecipe = async (rest, ingredientsArr) => {
 };
 
 const updateRecipe = async (id, rest, ingredientsArr) => {
-  // Edits recipe record
-  await db("recipes").update(rest).where({ id });
+  //  Updates everything in recipe except ingredients
+  const [updatedRecipeID] = await db("recipes")
+    .returning("id")
+    .update(rest)
+    .where({ id });
 
-  // Returns ingredients to be updated
-  const prevIngredients = await db("recipes_ingredients")
-    .select([
-      "recipes_ingredients.recipe_id",
-      "ingredients.id",
-      "ingredients.ingredient",
-    ])
-    .join("ingredients", "recipes_ingredients.ingredient_id", "ingredients.id")
-    .where({ recipe_id: id });
+  (async function deleteOldIngredients() {
+    const oldIngredients = await db("recipes_ingredients")
+      .select([
+        "recipes_ingredients.recipe_id",
+        "ingredients.id",
+        "ingredients.ingredient",
+      ])
+      .join(
+        "ingredients",
+        "recipes_ingredients.ingredient_id",
+        "ingredients.id"
+      )
+      .where({ recipe_id: id });
 
-  // Goes through previous ingredients and replaces them with new ingredients
-  let x = -1;
+    oldIngredients.forEach(async (ing, i) => {
+      const ingredient = ing["ingredient"];
+      const ingredientID = ing["id"];
+      await db("ingredients").where({ id: ingredientID }).del();
+    });
+  })();
 
-  prevIngredients.forEach(async (obj) => {
-    x++;
-    await db("ingredients")
-      .where({ id: obj.id })
-      .update({ ingredient: ingredientsArr[x] });
-  });
+  (async function addNewIngredients() {
+    ingredientsArr.forEach(async (ing) => {
+      const [ingredientID] = await db("ingredients")
+        .returning("id")
+        .insert({ ingredient: ing });
+
+      const recipesIngredientsInsert = await db("recipes_ingredients").insert({
+        recipe_id: id,
+        ingredient_id: ingredientID.id,
+      });
+    });
+  })();
+
+  return updatedRecipeID;
 };
 
 const deleteRecipe = async (id) => {

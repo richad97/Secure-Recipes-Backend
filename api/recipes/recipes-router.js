@@ -73,10 +73,10 @@ router.put("/edit/:id", authorize, async (req, res, next) => {
       description,
     } = req.body;
 
-    if (!title || !instructions) {
+    if (!title || ingredients.length === 0) {
       return res
         .status(400)
-        .json({ message: "Title and instructions must not be empty." });
+        .json({ message: "Title and ingredients must not be empty." });
     }
 
     const editedRecipe = await Recipes.updateRecipe(
