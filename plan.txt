@@ -92,7 +92,8 @@ share recipes between two users workflow
 allow each user to have randomly generated code to share 
 if code is shared between users, user can input their friends code into a form to view all their recipes
 
-
+----------------------------------------------------------
+----------------------------------------------------------
 
 TO FIX: (2/27/2022)
 -search bar 
@@ -120,3 +121,16 @@ TO FIX: (2/27/2022)
 -on last reset password form, redirect to login on success
 -validation on backend
 -style website/make responsive  
+
+TO FIX/COMPLETE: (3/6/2022)
+-email confirmation
+-add ability to see others recipes
+-validation on backend
+-finish forgot password
+-clean/trim input values before sending through axios & backend
+-make responsive  
+-home page
+-test
+
+----------------------------------------------------------
+----------------------------------------------------------

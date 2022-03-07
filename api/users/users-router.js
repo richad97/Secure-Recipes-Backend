@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const resetPassTokenBuilder = require("./resetpass-token-builder");
-const { JWT_RESETPASS } = process.env;
+const { JWT_RESETPASS, JWT_EMAIL_CONF_SECRET } = process.env;
 
 // [GET] /api/users - Get All Users
 router.get("/", async (req, res) => {
@@ -34,7 +34,7 @@ router.get("/resetpassword/:email", async (req, res) => {
     let found = await Users.findBy({ email: retrievedEmail });
 
     if (found.length === 0) {
-      res.status(400, "yo").json({ message: "E-mail not in database" });
+      res.status(400).json({ message: "E-mail not in database" });
     } else {
       const emailToken = resetPassTokenBuilder(retrievedEmail);
       const url = `http://localhost:3000/resetpassword/${emailToken}`;
@@ -91,6 +91,35 @@ router.post("/resetpassword", async (req, res, next) => {
 
             res.json(updatedUser);
           }
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.post("/confirmation", async (req, res, next) => {
+  try {
+    const emailToken = req.body.emailToken;
+
+    if (!emailToken) {
+      next({ status: 401, message: "Token Required" });
+    } else {
+      jwt.verify(emailToken, JWT_EMAIL_CONF_SECRET, async (err, decoded) => {
+        if (err) {
+          next({ status: 401, message: "Token Invalid" });
+        } else {
+          let decodedEmail = decoded.email;
+          let [foundByEmail] = await Users.findBy({ email: decodedEmail });
+
+          const confirmUser = await Users.updateUser(foundByEmail.id, {
+            confirmed: true,
+          });
+
+          res
+            .status(200)
+            .json({ message: "Confirmed! Please log in to continue." });
         }
       });
     }

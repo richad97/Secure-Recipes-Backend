@@ -1,7 +1,9 @@
 const router = require("express").Router();
 const Users = require("./../users/users-model");
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
 const tokenBuilder = require("./auth-token-builder");
+const emailConfTokenBuilder = require("../users/email-conf-token-builder");
 
 // [POST] /api/register - Register New User
 router.post("/register", async (req, res, next) => {
@@ -20,10 +22,34 @@ router.post("/register", async (req, res, next) => {
         password: hashPassword,
       });
 
+      const retrievedEmail = email.trim();
+
+      const emailToken = emailConfTokenBuilder(retrievedEmail);
+      const url = `http://localhost:3000/confirmation/${emailToken}`;
+
+      let transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.GMAIL,
+          pass: process.env.GMAIL_PASS,
+        },
+      });
+
+      let info = await transporter.sendMail({
+        from: '"Secret Recipes" <bb6885302@gmail.com>',
+        to: retrievedEmail,
+        subject: "Confirmation Email",
+        html: `<p>Please click on link to confirm email.</p><a href=${url}>${url}</a>`,
+      });
+
+      console.log("Message sent: %s", info.messageId);
       res.status(200).json(insertedUser[0]);
     }
   } catch (err) {
-    next(err);
+    // next(err);
+    res.status(400).json({
+      message: "Credentials already in database. Please review.",
+    });
   }
 });
 

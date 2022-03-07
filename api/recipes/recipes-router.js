@@ -6,13 +6,16 @@ const { authorize } = require("../auth/auth-middleware");
 router.post("/", authorize, async (req, res, next) => {
   try {
     const { username, confirmed } = req.decodedJWT;
-    // if (confirmed === false) {
-    //   res.json("User must confirm by link inside email address.");
-    // } else {
-    const returned = await Recipes.findRecipesByUser(username);
 
-    res.status(200).json(returned);
-    // }
+    if (confirmed === false) {
+      res
+        .status(200)
+        .json({ message: "Please confirm with the link in email to proceed." });
+    } else {
+      const returned = await Recipes.findRecipesByUser(username);
+
+      res.status(200).json(returned);
+    }
   } catch (err) {
     next(err);
   }
