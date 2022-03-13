@@ -32,7 +32,7 @@ exports.seed = function (knex) {
           password:
             "$2b$08$Izdfqr6tXXwQSZz0PEsaqOfTw/mbTr6ipETMLv8uAFgzq8CZ9Buqi" /* password is 123 */,
           confirmed: true,
-          token: makeID(),
+          token: "f9345add22",
         },
       ]);
     });

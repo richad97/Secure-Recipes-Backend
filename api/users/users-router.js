@@ -139,4 +139,16 @@ router.post("/friends", authorize, async (req, res, next) => {
   }
 });
 
+router.post("/addfriend", authorize, async (req, res, next) => {
+  try {
+    const shareToken = req.body.shareToken;
+    const userID = req.decodedJWT.id;
+
+    const result = await Users.addToFriendsTable(userID, shareToken);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;

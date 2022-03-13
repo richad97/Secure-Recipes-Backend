@@ -44,13 +44,48 @@ const findUserFriends = async (id) => {
   });
   const results = await Promise.all(friendsRecipes);
 
-  return friendsRecipes;
+  return results;
 };
 
-function addToFriendsTable() {
-  // if no user is not found within this table
-  // add user and friend to table (two records for each user)
-}
+const addToFriendsTable = async (initUserID, recivedToken) => {
+  try {
+    const [friend] = await findBy({ token: recivedToken });
+
+    if (friend) {
+      const userID = initUserID;
+      const friendID = friend.id;
+
+      const [found] = await db("user_friends").where({
+        user_id: userID,
+        friend_id: friendID,
+      });
+      const [found2] = await db("user_friends").where({
+        user_id: friendID,
+        friend_id: userID,
+      });
+
+      if (!found || !found2) {
+        await db("user_friends").insert({
+          user_id: userID,
+          friend_id: friendID,
+        });
+
+        await db("user_friends").insert({
+          user_id: friendID,
+          friend_id: userID,
+        });
+
+        return await db("user_friends");
+      } else if (found || found2) {
+        return "Already sharing information with this user";
+      }
+    } else {
+      return "No user found for token provided.";
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 module.exports = {
   findAllUsers,
@@ -59,4 +94,5 @@ module.exports = {
   findBy,
   updateUser,
   findUserFriends,
+  addToFriendsTable,
 };
