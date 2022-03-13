@@ -27,10 +27,36 @@ function updateUser(id, changes) {
     });
 }
 
+const findUserFriends = async (id) => {
+  const friends = await db("user_friends").where({ user_id: id });
+  const friendsRecipes = friends.map(async (obj) => {
+    const friendID = obj["friend_id"];
+    const [friend] = await findUserByID(friendID);
+
+    const newData = {
+      id: friend.id,
+      username: friend.username,
+      first_name: friend.first_name,
+      last_name: friend.last_name,
+    };
+
+    return newData;
+  });
+  const results = await Promise.all(friendsRecipes);
+
+  return friendsRecipes;
+};
+
+function addToFriendsTable() {
+  // if no user is not found within this table
+  // add user and friend to table (two records for each user)
+}
+
 module.exports = {
   findAllUsers,
   findUserByID,
   insertUser,
   findBy,
   updateUser,
+  findUserFriends,
 };

@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const resetPassTokenBuilder = require("./resetpass-token-builder");
 const { JWT_RESETPASS, JWT_EMAIL_CONF_SECRET } = process.env;
+const { authorize } = require("../auth/auth-middleware");
 
 // [GET] /api/users - Get All Users
 router.get("/", async (req, res) => {
@@ -123,6 +124,16 @@ router.post("/confirmation", async (req, res, next) => {
         }
       });
     }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.post("/friends", authorize, async (req, res, next) => {
+  try {
+    const userID = req.decodedJWT.id;
+    const usersFriends = await Users.findUserFriends(userID);
+    res.json(usersFriends);
   } catch (err) {
     console.log(err);
   }
