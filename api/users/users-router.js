@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Users = require("./users-model");
+const Recipes = require("../recipes/recipes-model");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -148,6 +149,34 @@ router.post("/addfriend", authorize, async (req, res, next) => {
     res.json(result);
   } catch (err) {
     console.log(err);
+  }
+});
+
+router.post("/recipes/:username", authorize, async (req, res, next) => {
+  try {
+    //  check if user is friends with username
+    //  if friends, run friend through recipe model to get recipes
+
+    const userID = req.decodedJWT.id;
+    const friendsUsername = req.params.username.trim().toLowerCase();
+    const usersFriends = await Users.findUserFriends(userID);
+    let keepGoing = false;
+
+    usersFriends.forEach((obj) => {
+      if (obj.username === friendsUsername) {
+        keepGoing = true;
+      }
+    });
+
+    if (keepGoing === false) {
+      res.status(400).json({ message: "Not friends with this user" });
+    } else if (keepGoing === true) {
+      const returned = await Recipes.findRecipesByUser(friendsUsername);
+
+      res.status(200).json(returned);
+    }
+  } catch (err) {
+    next(err);
   }
 });
 
