@@ -157,3 +157,6 @@ if token is valid, token is used to search for user in users table
 once user is found, user id is retrived
 --all friends token is checked at every view of friends page.
 --token is invalid if changed
+
+
+FIX 3/16/22

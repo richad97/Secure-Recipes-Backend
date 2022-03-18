@@ -133,8 +133,19 @@ router.post("/confirmation", async (req, res, next) => {
 router.post("/friends", authorize, async (req, res, next) => {
   try {
     const userID = req.decodedJWT.id;
-    const usersFriends = await Users.findUserFriends(userID);
-    res.json(usersFriends);
+    const confirmed = req.decodedJWT.confirmed;
+
+    if (confirmed === false) {
+      res
+        .status(200)
+        .json({ message: "Please confirm with the link in email to proceed." });
+    } else {
+      const usersFriends = await Users.findUserFriends(userID);
+      const [user] = await Users.findBy({ id: userID });
+      console.log(user);
+
+      res.status(200).json({ usersFriends, shareToken: user.token });
+    }
   } catch (err) {
     console.log(err);
   }
