@@ -4,6 +4,10 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const tokenBuilder = require("./auth-token-builder");
 const emailConfTokenBuilder = require("../users/email-conf-token-builder");
+const crypto = require("crypto");
+const makeID = () => {
+  return crypto.randomBytes(5).toString("hex");
+};
 
 // [POST] /api/register - Register New User
 router.post("/register", async (req, res, next) => {
@@ -20,6 +24,7 @@ router.post("/register", async (req, res, next) => {
         email,
         username,
         password: hashPassword,
+        token: makeID(),
       });
 
       const retrievedEmail = email.trim();

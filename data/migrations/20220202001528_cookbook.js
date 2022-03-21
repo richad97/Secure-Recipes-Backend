@@ -8,6 +8,7 @@ exports.up = (knex) => {
       tbl.string("username").unique().notNullable();
       tbl.string("password").notNullable();
       tbl.boolean("confirmed").notNullable().defaultTo(false);
+      tbl.string("token");
       tbl.timestamps(true, true);
     })
     .createTable("recipes", (tbl) => {
@@ -53,10 +54,16 @@ exports.up = (knex) => {
         .onDelete("CASCADE");
 
       tbl.primary(["recipe_id", "ingredient_id"]);
+    })
+    .createTable("user_friends", (tbl) => {
+      tbl.increments();
+      tbl.integer("user_id").notNullable();
+      tbl.integer("friend_id").notNullable();
     });
 };
 exports.down = function (knex) {
   return knex.schema
+    .dropTableIfExists("user_friends")
     .dropTableIfExists("recipes_ingredients")
     .dropTableIfExists("ingredients")
     .dropTableIfExists("recipes")

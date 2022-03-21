@@ -2,6 +2,11 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
+const crypto = require("crypto");
+const makeID = () => {
+  return crypto.randomBytes(5).toString("hex");
+};
+
 exports.seed = function (knex) {
   // Deletes ALL existing entries
   return knex("users")
@@ -17,6 +22,7 @@ exports.seed = function (knex) {
           password:
             "$2b$08$Izdfqr6tXXwQSZz0PEsaqOfTw/mbTr6ipETMLv8uAFgzq8CZ9Buqi" /* password is 123 */,
           confirmed: true,
+          token: makeID(),
         },
         {
           username: "janedoe123",
@@ -26,6 +32,7 @@ exports.seed = function (knex) {
           password:
             "$2b$08$Izdfqr6tXXwQSZz0PEsaqOfTw/mbTr6ipETMLv8uAFgzq8CZ9Buqi" /* password is 123 */,
           confirmed: true,
+          token: "f9345add22",
         },
       ]);
     });

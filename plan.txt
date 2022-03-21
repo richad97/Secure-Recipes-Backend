@@ -32,9 +32,9 @@ API Routes:
 
 Database:
     USERS
-    id  username    first_name      last_name       password
-    1   john123        john            doe             123            
-    2   jane123        jane            doe             123            
+    id  username    first_name      last_name       password        confirmed       share_token
+    1   john123        john            doe             123            true             39238
+    2   jane123        jane            doe             123            true             89483 
 
     RECIPES
     id  title               source              pic_url                     category    instructions        user_id(fk)     description 
@@ -134,3 +134,36 @@ TO FIX/COMPLETE: (3/6/2022)
 
 ----------------------------------------------------------
 ----------------------------------------------------------
+
+Add ability to see others recipes
+-add randomly generated token to user model
+    -along with ability to regenerate token
+-add friends nav link next to recipes
+-friends page includes table of friends recipes
+-each friend row contains
+    -friends name
+    -friends recipe count
+    -friend view recipes button
+    -check if friends token is valid or not
+    -delete friend button
+-button to add new friend
+
+--on view of friends recipes:
+    -recipe are shown like normal recipes
+    -recipes are shown without edit and delete button
+
+user recieves token from friend
+if token is valid, token is used to search for user in users table
+once user is found, user id is retrived
+--all friends token is checked at every view of friends page.
+--token is invalid if changed
+
+
+FIX 3/19/22
+-on register form submit, add loading icon --FIXED
+-register form data entering data with caps, make everything lowercased
+-new user doesn't get share token, existing do --FIXED
+-user can add himself --FIXED
+-user can't delete friends --FIXED
+-remove add recipes from friends
+-responsiveness for friends pages --FIXED
