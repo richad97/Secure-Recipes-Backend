@@ -50,7 +50,6 @@ const findUserFriends = async (id) => {
 const addToFriendsTable = async (initUserID, recivedToken) => {
   try {
     const [friend] = await findBy({ token: recivedToken });
-
     if (friend) {
       const userID = initUserID;
       const friendID = friend.id;
@@ -63,8 +62,9 @@ const addToFriendsTable = async (initUserID, recivedToken) => {
         user_id: friendID,
         friend_id: userID,
       });
-
-      if (!found || !found2) {
+      if (userID === friendID) {
+        return "You can't be friends with yourself lol";
+      } else if (!found || !found2) {
         await db("user_friends").insert({
           user_id: userID,
           friend_id: friendID,
@@ -87,6 +87,11 @@ const addToFriendsTable = async (initUserID, recivedToken) => {
   }
 };
 
+const deleteFriendship = async (id) => {
+  await db("user_friends").where({ user_id: id }).del();
+  return await db("user_friends").where({ friend_id: id }).del();
+};
+
 module.exports = {
   findAllUsers,
   findUserByID,
@@ -95,4 +100,5 @@ module.exports = {
   updateUser,
   findUserFriends,
   addToFriendsTable,
+  deleteFriendship,
 };

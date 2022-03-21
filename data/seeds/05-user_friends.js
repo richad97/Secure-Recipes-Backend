@@ -9,8 +9,8 @@ exports.seed = function (knex) {
     .then(function () {
       // Inserts seed entries
       return knex("user_friends").insert([
-        { user_id: 3, friend_id: 4 },
-        { user_id: 4, friend_id: 3 },
+        { user_id: 98, friend_id: 99 },
+        { user_id: 99, friend_id: 98 },
       ]);
     });
 };

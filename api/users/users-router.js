@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     const usersArr = await Users.findAllUsers();
     res.json(usersArr);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -25,7 +25,7 @@ router.get("/:id", async (req, res) => {
 
     res.json(user);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -64,7 +64,7 @@ router.get("/resetpassword/:email", async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -97,7 +97,7 @@ router.post("/resetpassword", async (req, res, next) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -126,7 +126,7 @@ router.post("/confirmation", async (req, res, next) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -142,12 +142,11 @@ router.post("/friends", authorize, async (req, res, next) => {
     } else {
       const usersFriends = await Users.findUserFriends(userID);
       const [user] = await Users.findBy({ id: userID });
-      console.log(user);
 
       res.status(200).json({ usersFriends, shareToken: user.token });
     }
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -159,7 +158,7 @@ router.post("/addfriend", authorize, async (req, res, next) => {
     const result = await Users.addToFriendsTable(userID, shareToken);
     res.json(result);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 });
 
@@ -186,6 +185,17 @@ router.post("/recipes/:username", authorize, async (req, res, next) => {
 
       res.status(200).json(returned);
     }
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete("/friends/delete/:id", authorize, async (req, res, next) => {
+  try {
+    const friendID = req.params.id;
+    const deleteFriendship = await Users.deleteFriendship(friendID);
+
+    res.status(200).json(deleteFriendship);
   } catch (err) {
     next(err);
   }

@@ -159,4 +159,11 @@ once user is found, user id is retrived
 --token is invalid if changed
 
 
-FIX 3/16/22
+FIX 3/19/22
+-on register form submit, add loading icon --FIXED
+-register form data entering data with caps, make everything lowercased
+-new user doesn't get share token, existing do --FIXED
+-user can add himself --FIXED
+-user can't delete friends --FIXED
+-remove add recipes from friends
+-responsiveness for friends pages --FIXED
