@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const authRouter = require("./auth/auth-router");
 const userRouter = require("./users/users-router");
+const friendRouter = require("./friends/friends-router");
 const recipeRouter = require("./recipes/recipes-router");
 const server = express();
 
@@ -11,6 +12,7 @@ server.use(cors());
 
 server.use("/auth", authRouter);
 server.use("/api/users", userRouter);
+server.use("/api/friends", friendRouter);
 server.use("/api/recipes", recipeRouter);
 
 server.use("*", (req, res) => {

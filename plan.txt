@@ -165,5 +165,5 @@ FIX 3/19/22
 -new user doesn't get share token, existing do --FIXED
 -user can add himself --FIXED
 -user can't delete friends --FIXED
--remove add recipes from friends
+-remove add recipes from friends --FIXED
 -responsiveness for friends pages --FIXED

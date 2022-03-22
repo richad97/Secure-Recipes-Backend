@@ -1,12 +1,10 @@
 const router = require("express").Router();
 const Users = require("./users-model");
-const Recipes = require("../recipes/recipes-model");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const resetPassTokenBuilder = require("./resetpass-token-builder");
 const { JWT_RESETPASS, JWT_EMAIL_CONF_SECRET } = process.env;
-const { authorize } = require("../auth/auth-middleware");
 
 // [GET] /api/users - Get All Users
 router.get("/", async (req, res) => {
@@ -125,77 +123,6 @@ router.post("/confirmation", async (req, res, next) => {
         }
       });
     }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/friends", authorize, async (req, res, next) => {
-  try {
-    const userID = req.decodedJWT.id;
-    const confirmed = req.decodedJWT.confirmed;
-
-    if (confirmed === false) {
-      res
-        .status(200)
-        .json({ message: "Please confirm with the link in email to proceed." });
-    } else {
-      const usersFriends = await Users.findUserFriends(userID);
-      const [user] = await Users.findBy({ id: userID });
-
-      res.status(200).json({ usersFriends, shareToken: user.token });
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/addfriend", authorize, async (req, res, next) => {
-  try {
-    const shareToken = req.body.shareToken;
-    const userID = req.decodedJWT.id;
-
-    const result = await Users.addToFriendsTable(userID, shareToken);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post("/recipes/:username", authorize, async (req, res, next) => {
-  try {
-    //  check if user is friends with username
-    //  if friends, run friend through recipe model to get recipes
-
-    const userID = req.decodedJWT.id;
-    const friendsUsername = req.params.username.trim().toLowerCase();
-    const usersFriends = await Users.findUserFriends(userID);
-    let keepGoing = false;
-
-    usersFriends.forEach((obj) => {
-      if (obj.username === friendsUsername) {
-        keepGoing = true;
-      }
-    });
-
-    if (keepGoing === false) {
-      res.status(400).json({ message: "Not friends with this user" });
-    } else if (keepGoing === true) {
-      const returned = await Recipes.findRecipesByUser(friendsUsername);
-
-      res.status(200).json(returned);
-    }
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.delete("/friends/delete/:id", authorize, async (req, res, next) => {
-  try {
-    const friendID = req.params.id;
-    const deleteFriendship = await Users.deleteFriendship(friendID);
-
-    res.status(200).json(deleteFriendship);
   } catch (err) {
     next(err);
   }

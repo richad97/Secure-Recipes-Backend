@@ -14,7 +14,8 @@ exports.seed = function (knex) {
           prep_time: 10,
           source: "Family Recipe",
           pic_url:
-            "https://res.cloudinary.com/diampwv1v/image/upload/v1646337579/nl1u1mvl22jjpotkbv2w.jpg",
+            "https://res.cloudinary.com/diampwv1v/image/upload/v1647909722/yfnmgmvoz3x08uivv86t.jpg",
+
           category: "Snack",
           description: "Homemade grilled cheese.",
           instructions:
@@ -27,7 +28,7 @@ exports.seed = function (knex) {
           prep_time: 10,
           source: "Online",
           pic_url:
-            "https://res.cloudinary.com/diampwv1v/image/upload/v1646337600/hh3dhrdy27mtfzdpudjy.jpg",
+            "https://res.cloudinary.com/diampwv1v/image/upload/v1647910211/oc2tnoh0auifz8knjta9.webp",
           category: "Lunch",
           description: "Homemade cheap quesadilla :)",
           instructions:
