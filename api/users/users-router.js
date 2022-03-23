@@ -7,7 +7,7 @@ const resetPassTokenBuilder = require("./resetpass-token-builder");
 const { JWT_RESETPASS, JWT_EMAIL_CONF_SECRET } = process.env;
 
 // [GET] /api/users - Get All Users
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   try {
     const usersArr = await Users.findAllUsers();
     res.json(usersArr);
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // [GET] /api/users/:id - Get User By ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const user = await Users.findUserByID(req.params.id);
 
@@ -28,7 +28,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // send email if in db
-router.get("/resetpassword/:email", async (req, res) => {
+router.get("/resetpassword/:email", async (req, res, next) => {
   try {
     const retrievedEmail = req.params.email.trim();
     let found = await Users.findBy({ email: retrievedEmail });
