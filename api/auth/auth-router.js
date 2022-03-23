@@ -51,9 +51,10 @@ router.post("/register", async (req, res, next) => {
       res.status(200).json(insertedUser[0]);
     }
   } catch (err) {
-    res.status(400).json({
-      message: "Credentials already in database. Please review.",
-    });
+    // res.status(400).json({
+    //   message: "Credentials already in database. Please review.",
+    // });
+    next(err);
   }
 });
 
