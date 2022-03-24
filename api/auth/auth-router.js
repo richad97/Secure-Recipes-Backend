@@ -33,7 +33,7 @@ router.post("/register", async (req, res, next) => {
       const url = `http://localhost:3000/confirmation/${emailToken}`;
 
       let transporter = nodemailer.createTransport({
-        service: "Gmail",
+        service: "gmail",
         auth: {
           user: process.env.GMAIL,
           pass: process.env.GMAIL_PASS,
@@ -41,7 +41,7 @@ router.post("/register", async (req, res, next) => {
       });
 
       let info = await transporter.sendMail({
-        from: '"Secret Recipes" <bb6885302@gmail.com>',
+        from: '"Secure Recipes" <bb6885302@hotmail.com>',
         to: retrievedEmail,
         subject: "Confirmation Email",
         html: `<p>Please click on link to confirm email.</p><a href=${url}>${url}</a>`,
@@ -51,10 +51,8 @@ router.post("/register", async (req, res, next) => {
       res.status(200).json(insertedUser[0]);
     }
   } catch (err) {
-    // res.status(400).json({
-    //   message: "Credentials already in database. Please review.",
-    // });
     next(err);
+    console.log(err);
   }
 });
 
