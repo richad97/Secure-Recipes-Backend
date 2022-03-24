@@ -30,7 +30,7 @@ router.post("/register", async (req, res, next) => {
       const retrievedEmail = email.trim();
 
       const emailToken = emailConfTokenBuilder(retrievedEmail);
-      const url = `http://localhost:3000/confirmation/${emailToken}`;
+      const url = `https://meek-klepon-9ced87.netlify.app/confirmation/${emailToken}`;
 
       let transporter = nodemailer.createTransport({
         service: "gmail",

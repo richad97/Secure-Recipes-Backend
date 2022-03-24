@@ -37,7 +37,7 @@ router.get("/resetpassword/:email", async (req, res, next) => {
       res.status(400).json({ message: "E-mail not in database" });
     } else {
       const emailToken = resetPassTokenBuilder(retrievedEmail);
-      const url = `http://localhost:3000/resetpassword/${emailToken}`;
+      const url = `https://meek-klepon-9ced87.netlify.app/resetpassword/${emailToken}`;
 
       let transporter = nodemailer.createTransport({
         service: "Gmail",
