@@ -4,15 +4,17 @@ const Users = require("../users/users-model");
 const Recipes = require("../recipes/recipes-model");
 const { authorize } = require("../auth/auth-middleware");
 
+// [POST] /api/friends
 router.post("/", authorize, async (req, res, next) => {
   try {
     const userID = req.decodedJWT.id;
     const confirmed = req.decodedJWT.confirmed;
 
     if (confirmed === false) {
-      res
-        .status(200)
-        .json({ message: "Please confirm with the link in email to proceed." });
+      next({
+        status: 400,
+        error: "Please confirm with the link in the email to proceed.",
+      });
     } else {
       const usersFriends = await Friends.findUserFriends(userID);
       const [user] = await Users.findBy({ id: userID });
@@ -24,23 +26,22 @@ router.post("/", authorize, async (req, res, next) => {
   }
 });
 
+// [POST] /api/friends/addfriend
 router.post("/addfriend", authorize, async (req, res, next) => {
   try {
     const shareToken = req.body.shareToken;
     const userID = req.decodedJWT.id;
-
     const result = await Friends.addToFriendsTable(userID, shareToken);
-    res.json(result);
+
+    res.status(200).json(result);
   } catch (err) {
     next(err);
   }
 });
 
+// [POST] /api/friends/recipes/:username
 router.post("/recipes/:username", authorize, async (req, res, next) => {
   try {
-    //  check if user is friends with username
-    //  if friends, run friend through recipe model to get recipes
-
     const userID = req.decodedJWT.id;
     const friendsUsername = req.params.username.trim().toLowerCase();
     const usersFriends = await Friends.findUserFriends(userID);
@@ -53,7 +54,10 @@ router.post("/recipes/:username", authorize, async (req, res, next) => {
     });
 
     if (keepGoing === false) {
-      res.status(400).json({ message: "Not friends with this user" });
+      next({
+        status: 400,
+        error: "Not friends with this user.",
+      });
     } else if (keepGoing === true) {
       const returned = await Recipes.findRecipesByUser(friendsUsername);
 

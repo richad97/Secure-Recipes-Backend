@@ -15,7 +15,7 @@ router.post("/register", async (req, res, next) => {
     const { first_name, last_name, email, username, password } = req.body;
 
     if (!first_name || !last_name || !email || !username || !password) {
-      next({ status: 400, message: "Please make sure all inputs are filled." });
+      next({ status: 400, error: "Please make sure all inputs are filled." });
     } else {
       const hashPassword = bcrypt.hashSync(password, 8);
       const insertedUser = await Users.insertUser({
@@ -52,7 +52,6 @@ router.post("/register", async (req, res, next) => {
     }
   } catch (err) {
     next(err);
-    console.log(err);
   }
 });
 
@@ -65,14 +64,14 @@ router.post("/login", async (req, res, next) => {
     if (!username || !password) {
       next({
         status: 400,
-        message: "Please make sure all inputs are filled.",
+        error: "Please make sure all inputs are filled.",
       });
     } else if (user && bcrypt.compareSync(password, user.password)) {
       const token = tokenBuilder(user);
 
       res.status(200).json({ user, token });
     } else {
-      next({ status: 400, message: "Invalid Credentials." });
+      next({ status: 400, error: "Invalid Credentials." });
     }
   } catch (err) {
     next(err);

@@ -10,7 +10,8 @@ const { JWT_RESETPASS, JWT_EMAIL_CONF_SECRET } = process.env;
 router.get("/", async (req, res, next) => {
   try {
     const usersArr = await Users.findAllUsers();
-    res.json(usersArr);
+
+    res.status(200).json(usersArr);
   } catch (err) {
     next(err);
   }
@@ -21,7 +22,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const user = await Users.findUserByID(req.params.id);
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     next(err);
   }
@@ -34,7 +35,10 @@ router.get("/resetpassword/:email", async (req, res, next) => {
     let found = await Users.findBy({ email: retrievedEmail });
 
     if (found.length === 0) {
-      res.status(400).json({ message: "E-mail not in database" });
+      next({
+        status: 400,
+        error: "E-mail not in database.",
+      });
     } else {
       const emailToken = resetPassTokenBuilder(retrievedEmail);
       const url = `https://meek-klepon-9ced87.netlify.app/resetpassword/${emailToken}`;
@@ -56,9 +60,9 @@ router.get("/resetpassword/:email", async (req, res, next) => {
 
       console.log("Message sent: %s", info.messageId);
 
-      res.json({
+      res.status(200).json({
         info: info.messageId,
-        message: "E-mail sent",
+        message: "E-mail has been sent.",
       });
     }
   } catch (err) {
@@ -72,14 +76,14 @@ router.post("/resetpassword", async (req, res, next) => {
     const { emailToken, newPassword } = req.body;
 
     if (!emailToken) {
-      next({ status: 401, meesage: "Token Required" });
+      next({ status: 401, error: "Token Required" });
     } else {
       jwt.verify(emailToken, JWT_RESETPASS, async (err, decoded) => {
         if (err) {
-          next({ status: 401, message: "Token Invalid" });
+          next({ status: 401, error: "Token Invalid" });
         } else {
           if (!newPassword) {
-            next({ status: 401, message: "Password can not be empty" });
+            next({ status: 401, error: "Password can not be empty" });
           } else {
             let decodedEmail = decoded.email;
             let [foundByEmail] = await Users.findBy({ email: decodedEmail });
@@ -89,7 +93,7 @@ router.post("/resetpassword", async (req, res, next) => {
               password: hashPassword,
             });
 
-            res.json(updatedUser);
+            res.status(200).json(updatedUser);
           }
         }
       });
