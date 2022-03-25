@@ -8,9 +8,10 @@ router.post("/", authorize, async (req, res, next) => {
     const { username, confirmed } = req.decodedJWT;
 
     if (confirmed === false) {
-      res
-        .status(200)
-        .json({ message: "Please confirm with the link in email to proceed." });
+      next({
+        status: 400,
+        error: "Please confirm with the link in the email to proceed.",
+      });
     } else {
       const returned = await Recipes.findRecipesByUser(username);
 
@@ -36,25 +37,27 @@ router.post("/create", authorize, async (req, res, next) => {
       description,
     } = req.body;
 
-    if (!title || !instructions) {
-      return res
-        .status(400)
-        .json({ message: "Title and instructions must not be empty." });
+    if (!title || !instructions || ingredients.length === 0) {
+      next({
+        status: 400,
+        error: "Title and instuctions must not be empty.",
+      });
+    } else {
+      const createdRecipe = await Recipes.createRecipe(
+        {
+          title,
+          prep_time,
+          source,
+          pic_url,
+          category,
+          instructions,
+          description,
+          user_id: userID,
+        },
+        ingredients
+      );
+      res.status(200).json({ message: "Recipe created." });
     }
-    const createdRecipe = await Recipes.createRecipe(
-      {
-        title,
-        prep_time,
-        source,
-        pic_url,
-        category,
-        instructions,
-        description,
-        user_id: userID,
-      },
-      ingredients
-    );
-    res.status(200).json({ message: "Recipe created." });
   } catch (err) {
     next(err);
   }
@@ -63,7 +66,6 @@ router.post("/create", authorize, async (req, res, next) => {
 // [PUT] /api/recipes/edit/:id - Edits recipe
 router.put("/edit/:id", authorize, async (req, res, next) => {
   try {
-    const { id } = req.params;
     const userID = req.decodedJWT.id;
     const {
       title,
@@ -75,28 +77,30 @@ router.put("/edit/:id", authorize, async (req, res, next) => {
       instructions,
       description,
     } = req.body;
+    const { id } = req.params;
 
-    if (!title || ingredients.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Title and ingredients must not be empty." });
+    if (!title || !instructions || ingredients.length === 0) {
+      next({
+        status: 400,
+        error: "Title and instuctions must not be empty.",
+      });
+    } else {
+      const editedRecipe = await Recipes.updateRecipe(
+        id,
+        {
+          title,
+          prep_time,
+          source,
+          pic_url,
+          category,
+          instructions,
+          description,
+          user_id: userID,
+        },
+        ingredients
+      );
+      res.status(200).json(editedRecipe);
     }
-
-    const editedRecipe = await Recipes.updateRecipe(
-      id,
-      {
-        title,
-        prep_time,
-        source,
-        pic_url,
-        category,
-        instructions,
-        description,
-        user_id: userID,
-      },
-      ingredients
-    );
-    res.status(200).json(editedRecipe);
   } catch (err) {
     next(err);
   }
@@ -108,7 +112,6 @@ router.delete("/delete/:id", authorize, async (req, res, next) => {
     const { id } = req.params;
 
     await Recipes.deleteRecipe(id);
-
     res.status(200).json("Successfully deleted recipe.");
   } catch (err) {
     next(err);
