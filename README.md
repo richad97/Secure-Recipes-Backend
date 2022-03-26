@@ -18,7 +18,14 @@ username:  janedoe123, password: 123
 ```
 ## API Endpoints
 #### [GET] /api/users
-Returns every user in the database. Used for testing purposes.
+Expects password to keep anyone from viewing. Returns every user in the database. Used for testing purposes.
+##### Request
+```
+{
+    "password": "admin"
+}
+```
+##### Response
 ```
 [
     {
@@ -48,7 +55,14 @@ Returns every user in the database. Used for testing purposes.
 ]
 ```
 #### [GET] /api/users/:id
-Returns user by their ID in the database. Used for testing purposes.
+Expects password to keep anyone from viewing. Returns user by their ID in the database. Used for testing purposes.
+##### Request 
+```
+{
+    "password": "admin"
+}
+```
+##### Response
 ```
 [
     {
