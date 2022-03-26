@@ -1,4 +1,5 @@
-// when deploying, uncomment ssl string
+// in dev, comment out ssl string
+// in prod, uncomment ssl string
 
 require("dotenv").config();
 
@@ -17,7 +18,7 @@ module.exports = {
     ...sharedConfig,
     connection: {
       connectionString: DATABASE_URL || PG_CONNECTION_STRING,
-      ssl: { rejectUnauthorized: false },
+      // ssl: { rejectUnauthorized: false },
     },
   },
 

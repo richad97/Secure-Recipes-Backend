@@ -64,10 +64,7 @@ USERS to RECIPES                1:n
 RECIPES to INGREDIENTS          n:m
 
 
-
-
-
-forgot password workflow
+forgot password flow
 --------------------------
 user attemps login
 user forgot password(clicks on forgot password link) 
@@ -78,24 +75,23 @@ if user clicks on that link in email, they are redirected to change password pag
 on submission, redirected to login page to login with new credentials
 
 
-
-confirmation email on register workflow
+confirmation email on register flow
 -----------------------------------------
 right after new user is registered, send verification email to user
 wait till user opens link inside email
 dont show full app until then
 
 
-
-share recipes between two users workflow
+share recipes between two users flow
 -----------------------------------------
 allow each user to have randomly generated code to share 
 if code is shared between users, user can input their friends code into a form to view all their recipes
 
+
 ----------------------------------------------------------
 ----------------------------------------------------------
 
-TO FIX: (2/27/2022)
+FIX 2/27/2022
 -search bar 
 -redirect to recipes after creation of recipe
 -redirect to recipes after edit of recipe
@@ -122,7 +118,7 @@ TO FIX: (2/27/2022)
 -validation on backend
 -style website/make responsive  
 
-TO FIX/COMPLETE: (3/6/2022)
+FIX 3/6/2022
 -email confirmation
 -add ability to see others recipes
 -validation on backend
@@ -158,6 +154,8 @@ once user is found, user id is retrived
 --all friends token is checked at every view of friends page.
 --token is invalid if changed
 
+----------------------------------------------------------
+----------------------------------------------------------
 
 FIX 3/19/22
 -on register form submit, add loading icon --FIXED
@@ -167,3 +165,15 @@ FIX 3/19/22
 -user can't delete friends --FIXED
 -remove add recipes from friends --FIXED
 -responsiveness for friends pages --FIXED
+
+FIX 3/25/22
+-add backend validation/trimming
+-make sure front, back, and data validation all match
+-check to see if any unique user credentials already exist when registering new users
+-[PUT] /api/recipes/edit/:id --- this endpoint edits recipe based on the recipe id 
+    that is in param. If one user tries to edit recipe that isn't their own, it will 
+    delete recipe from its orignal account, and add it to the account from the token
+    data. --FIXED
+    --  Same with delete recipe enpoint. Anyone with valid token can delete any recipe --FIXED
+-add more mock data (seeds)/make more users and friendships
+-make more middleware, review old projects
