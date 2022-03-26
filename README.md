@@ -122,6 +122,20 @@ Expects username and password. Credentials must match someone within the databas
     "token": "jwt"
 }
 ```
+#### [POST] /api/users/confirmation
+Expects JWT sent to user e-mail after successful registration.
+##### Request
+```
+{
+    "emailToken":"jwt"
+}
+```
+##### Response
+```
+{
+    "message": "Confirmed! Please log in to continue."
+}
+```
 #### [GET] /api/users/resetpassword/:email
 Sends e-mail with link to reset password to e-mail in params.
 ##### Response
