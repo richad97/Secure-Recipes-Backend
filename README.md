@@ -18,7 +18,14 @@ username:  janedoe123, password: 123
 ```
 ## API Endpoints
 #### [GET] /api/users
-Returns every user in the database. Used for testing purposes.
+Expects password to keep anyone from viewing. Returns every user in the database. Used for testing purposes.
+##### Request
+```
+{
+    "password": "admin"
+}
+```
+##### Response
 ```
 [
     {
@@ -48,7 +55,14 @@ Returns every user in the database. Used for testing purposes.
 ]
 ```
 #### [GET] /api/users/:id
-Returns user by their ID in the database. Used for testing purposes.
+Expects password to keep anyone from viewing. Returns user by their ID in the database. Used for testing purposes.
+##### Request 
+```
+{
+    "password": "admin"
+}
+```
+##### Response
 ```
 [
     {
@@ -120,6 +134,20 @@ Expects username and password. Credentials must match someone within the databas
         "updated_at": "2022-03-25T08:12:30.419Z"
     },
     "token": "jwt"
+}
+```
+#### [POST] /api/users/confirmation
+Expects JWT sent to user e-mail after successful registration.
+##### Request
+```
+{
+    "emailToken":"jwt"
+}
+```
+##### Response
+```
+{
+    "message": "Confirmed! Please log in to continue."
 }
 ```
 #### [GET] /api/users/resetpassword/:email
