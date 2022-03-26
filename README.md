@@ -140,7 +140,7 @@ Accepts token sent in e-mail. If token is valid, "newPassword" becomes the new p
     "newPassword": "pass"
 }
 ```
-##### Request
+##### Response
 ```
 [
     {
