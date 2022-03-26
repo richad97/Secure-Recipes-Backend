@@ -67,6 +67,7 @@ router.post("/create", authorize, async (req, res, next) => {
 router.put("/edit/:id", authorize, async (req, res, next) => {
   try {
     const userID = req.decodedJWT.id;
+    const username = req.decodedJWT.username;
     const {
       title,
       prep_time,
@@ -85,21 +86,35 @@ router.put("/edit/:id", authorize, async (req, res, next) => {
         error: "Title and instuctions must not be empty.",
       });
     } else {
-      const editedRecipe = await Recipes.updateRecipe(
-        id,
-        {
-          title,
-          prep_time,
-          source,
-          pic_url,
-          category,
-          instructions,
-          description,
-          user_id: userID,
-        },
-        ingredients
-      );
-      res.status(200).json(editedRecipe);
+      // check to see if recipe is by user
+      const recipesByUser = await Recipes.findRecipesByUser(username);
+      let foundOne = false;
+
+      recipesByUser.forEach((recipe) => {
+        if (recipe["recipe_id"] === Number(id)) {
+          foundOne = true;
+        }
+      });
+
+      if (foundOne === false) {
+        next({ status: 400, error: "Recipe must belong to you." });
+      } else if (foundOne === true) {
+        const editedRecipe = await Recipes.updateRecipe(
+          id,
+          {
+            title,
+            prep_time,
+            source,
+            pic_url,
+            category,
+            instructions,
+            description,
+            user_id: userID,
+          },
+          ingredients
+        );
+        res.status(200).json(editedRecipe);
+      }
     }
   } catch (err) {
     next(err);
@@ -110,9 +125,22 @@ router.put("/edit/:id", authorize, async (req, res, next) => {
 router.delete("/delete/:id", authorize, async (req, res, next) => {
   try {
     const { id } = req.params;
+    const username = req.decodedJWT.username;
+    const recipesByUser = await Recipes.findRecipesByUser(username);
+    let foundOne = false;
 
-    await Recipes.deleteRecipe(id);
-    res.status(200).json("Successfully deleted recipe.");
+    recipesByUser.forEach((recipe) => {
+      if (recipe["recipe_id"] === Number(id)) {
+        foundOne = true;
+      }
+    });
+
+    if (foundOne === false) {
+      next({ status: 400, error: "Recipe must belong to you." });
+    } else if (foundOne === true) {
+      await Recipes.deleteRecipe(id);
+      res.status(200).json("Successfully deleted recipe.");
+    }
   } catch (err) {
     next(err);
   }
