@@ -35,7 +35,7 @@ router.post("/register", async (req, res, next) => {
       res.status(200).json(insertedUser[0]);
     }
   } catch (err) {
-    next(err);
+    next({ status: 500, error: "Unknown Error. Please try again later." });
   }
 });
 

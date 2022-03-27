@@ -176,4 +176,4 @@ FIX 3/25/22
     data. --FIXED
     --  Same with delete recipe enpoint. Anyone with valid token can delete any recipe --FIXED
 -add more mock data (seeds)/make more users and friendships
--make more middleware, review old projects
+-make more middleware, review old projects --FIXED
