@@ -1,12 +1,13 @@
 const router = require("express").Router();
 const Users = require("./users-model");
 const bcrypt = require("bcrypt");
-const sendEmailResetPass = require("../utils/SendEmailResetPass");
+const sendEmail = require("../utils/sendEmail");
 const {
   checkResetPassToken,
   checkConfirmationToken,
   checkPassword,
 } = require("./users-middleware");
+const resetPassTokenBuilder = require("./resetpass-token-builder");
 
 // [GET] /api/users - Get All Users
 router.get("/", checkPassword, async (req, res, next) => {
@@ -30,7 +31,7 @@ router.get("/:id", checkPassword, async (req, res, next) => {
   }
 });
 
-// send email if in db
+// [GET] /api/users/resetpassword/:email - Sends e-mail to param if it's in the db
 router.get("/resetpassword/:email", async (req, res, next) => {
   try {
     const retrievedEmail = req.params.email.trim();
@@ -42,7 +43,12 @@ router.get("/resetpassword/:email", async (req, res, next) => {
         error: "E-mail not in database.",
       });
     } else {
-      await sendEmailResetPass(retrievedEmail);
+      await sendEmail(
+        retrievedEmail,
+        resetPassTokenBuilder,
+        "Reset Password",
+        "resetpassword"
+      );
 
       res.status(200).json({
         message: "E-mail has been sent.",
@@ -53,7 +59,7 @@ router.get("/resetpassword/:email", async (req, res, next) => {
   }
 });
 
-// actually change password in database for user
+// [POST] /api/users/resetpassword - Actually changes password in database for user
 router.post("/resetpassword", checkResetPassToken, async (req, res, next) => {
   try {
     const decodedEmail = req.body.decoded.email;
@@ -71,6 +77,7 @@ router.post("/resetpassword", checkResetPassToken, async (req, res, next) => {
   }
 });
 
+// [POST] /api/users/confirmation - changes confirmation to true
 router.post("/confirmation", checkConfirmationToken, async (req, res, next) => {
   try {
     const decodedEmail = req.body.decoded.email;

@@ -4,7 +4,7 @@ const Users = require("../users/users-model");
 const Recipes = require("../recipes/recipes-model");
 const { authorize } = require("../auth/auth-middleware");
 
-// [POST] /api/friends
+// [POST] /api/friends - Retrieves friends of user
 router.post("/", authorize, async (req, res, next) => {
   try {
     const userID = req.decodedJWT.id;
@@ -26,7 +26,7 @@ router.post("/", authorize, async (req, res, next) => {
   }
 });
 
-// [POST] /api/friends/addfriend
+// [POST] /api/friends/addfriend - Adds friend
 router.post("/addfriend", authorize, async (req, res, next) => {
   try {
     const shareToken = req.body.shareToken;
@@ -39,7 +39,7 @@ router.post("/addfriend", authorize, async (req, res, next) => {
   }
 });
 
-// [POST] /api/friends/recipes/:username
+// [POST] /api/friends/recipes/:username  - Retrieves recipe of friend
 router.post("/recipes/:username", authorize, async (req, res, next) => {
   try {
     const userID = req.decodedJWT.id;
@@ -68,6 +68,7 @@ router.post("/recipes/:username", authorize, async (req, res, next) => {
   }
 });
 
+// [DELETE] /api/friends/delete/:id - Deletes friend
 router.delete("/delete/:id", authorize, async (req, res, next) => {
   try {
     const friendID = req.params.id;

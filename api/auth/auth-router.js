@@ -1,13 +1,10 @@
 const router = require("express").Router();
 const Users = require("./../users/users-model");
 const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
 const tokenBuilder = require("./auth-token-builder");
+const generateRandStr = require("../utils/generateRandStr");
+const sendEmail = require("../utils/sendEmail");
 const emailConfTokenBuilder = require("../users/email-conf-token-builder");
-const crypto = require("crypto");
-const makeID = () => {
-  return crypto.randomBytes(5).toString("hex");
-};
 
 // [POST] /api/register - Register New User
 router.post("/register", async (req, res, next) => {
@@ -24,30 +21,17 @@ router.post("/register", async (req, res, next) => {
         email,
         username,
         password: hashPassword,
-        token: makeID(),
+        token: generateRandStr(5),
       });
-
       const retrievedEmail = email.trim();
 
-      const emailToken = emailConfTokenBuilder(retrievedEmail);
-      const url = `https://meek-klepon-9ced87.netlify.app/confirmation/${emailToken}`;
+      await sendEmail(
+        retrievedEmail,
+        emailConfTokenBuilder,
+        "Confirm Account",
+        "confirmation"
+      );
 
-      let transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.GMAIL,
-          pass: process.env.GMAIL_PASS,
-        },
-      });
-
-      let info = await transporter.sendMail({
-        from: '"Secure Recipes" <bb6885302@hotmail.com>',
-        to: retrievedEmail,
-        subject: "Confirmation Email",
-        html: `<p>Please click on link to confirm email.</p><a href=${url}>${url}</a>`,
-      });
-
-      console.log("Message sent: %s", info.messageId);
       res.status(200).json(insertedUser[0]);
     }
   } catch (err) {
