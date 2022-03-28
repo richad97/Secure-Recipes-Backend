@@ -1,4 +1,4 @@
-# Secret Family Recipes API
+# Secure Recipes API
 ## Host - https://secure-recipes-backend.herokuapp.com/
 Backend API for Secret Family Recipes
 ## Description
